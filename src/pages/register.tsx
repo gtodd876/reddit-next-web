@@ -7,6 +7,7 @@ import {
   FormLabel,
   FormHelperText,
   Button,
+  Box,
 } from '@chakra-ui/core';
 
 interface RegisterProps {}
@@ -25,12 +26,14 @@ export default function register() {
               label="Username"
               placeholder="username"
             />
-            <InputField
-              name="password"
-              label="Password"
-              placeholder="password"
-              type="password"
-            />
+            <Box mt={4}>
+              <InputField
+                name="password"
+                label="Password"
+                placeholder="password"
+                type="password"
+              />
+            </Box>
             <Button
               mt={4}
               type="submit"
