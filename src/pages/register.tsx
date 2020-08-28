@@ -13,8 +13,10 @@ import { useMutation } from 'urql';
 import { useRegisterMutation } from '../generated/graphql';
 import { toErrorMap } from '../utils/toErrorMap';
 import { useRouter } from 'next/router';
+import { withUrqlClient } from 'next-urql';
+import { createUrqlClient } from '../utils/createUrqlClient';
 
-export default function Register() {
+function Register() {
   const router = useRouter();
   const [, register] = useRegisterMutation();
   return (
@@ -59,3 +61,5 @@ export default function Register() {
     </Wrapper>
   );
 }
+
+export default withUrqlClient(createUrqlClient)(Register);

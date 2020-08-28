@@ -13,8 +13,10 @@ import { useMutation } from 'urql';
 import { useRegisterMutation, useLoginMutation } from '../generated/graphql';
 import { toErrorMap } from '../utils/toErrorMap';
 import { useRouter } from 'next/router';
+import { withUrqlClient } from 'next-urql';
+import { createUrqlClient } from '../utils/createUrqlClient';
 
-export default function Login() {
+function Login() {
   const router = useRouter();
   const [, login] = useLoginMutation();
   return (
@@ -59,3 +61,5 @@ export default function Login() {
     </Wrapper>
   );
 }
+
+export default withUrqlClient(createUrqlClient)(Login);
