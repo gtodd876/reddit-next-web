@@ -8,6 +8,8 @@ import {
   FormHelperText,
   Button,
   Box,
+  Link,
+  Flex,
 } from '@chakra-ui/core';
 import { useMutation } from 'urql';
 import { useRegisterMutation, useLoginMutation } from '../generated/graphql';
@@ -15,6 +17,8 @@ import { toErrorMap } from '../utils/toErrorMap';
 import { useRouter } from 'next/router';
 import { withUrqlClient } from 'next-urql';
 import { createUrqlClient } from '../utils/createUrqlClient';
+import NextLink from 'next/link';
+import { route } from 'next/dist/next-server/server/router';
 
 function Login() {
   const router = useRouter();
@@ -22,22 +26,29 @@ function Login() {
   return (
     <Wrapper variant="small">
       <Formik
-        initialValues={{ username: '', password: '' }}
+        initialValues={{ usernameOrEmail: '', password: '' }}
         onSubmit={async (values, { setErrors }) => {
+          if (values.usernameOrEmail) {
+            values.usernameOrEmail = values.usernameOrEmail.trim();
+          }
           const response = await login(values);
           if (response.data?.login.errors) {
             setErrors(toErrorMap(response.data.login.errors));
           } else if (response.data?.login.user) {
-            router.push('/');
+            if (typeof router.query.next === 'string') {
+              router.push(router.query.next);
+            } else {
+              router.push('/');
+            }
           }
         }}
       >
         {({ isSubmitting }) => (
           <Form>
             <InputField
-              name="username"
-              label="Username"
-              placeholder="username"
+              name="usernameOrEmail"
+              label="Username or Email"
+              placeholder="username or email"
             />
             <Box mt={4}>
               <InputField
@@ -47,6 +58,11 @@ function Login() {
                 type="password"
               />
             </Box>
+            <Flex mt={2} justify="flex-end">
+              <NextLink href="/forgot-password">
+                <Link>forgot password</Link>
+              </NextLink>
+            </Flex>
             <Button
               mt={4}
               type="submit"

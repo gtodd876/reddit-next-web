@@ -42,7 +42,7 @@ export default function NavBar({}: NavBarProps) {
     );
   }
   return (
-    <Flex bg="#333" p={4}>
+    <Flex position="sticky" top={0} bg="#333" p={4} zIndex={1}>
       <Box ml={'auto'}>{body}</Box>
     </Flex>
   );
