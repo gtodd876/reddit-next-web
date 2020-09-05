@@ -32,8 +32,6 @@ const cursorPagination = (): Resolver => {
   return (_parent, fieldArgs, cache, info) => {
     const { parentKey: entityKey, fieldName } = info;
     const allFields = cache.inspectFields(entityKey);
-    console.log({ allFields });
-
     const fieldInfos = allFields.filter(info => info.fieldName === fieldName);
     const size = fieldInfos.length;
     if (size === 0) {
@@ -65,58 +63,6 @@ const cursorPagination = (): Resolver => {
       hasMore,
       page: results,
     };
-
-    // const visited = new Set();
-    // let result: NullArray<string> = [];
-    // let prevOffset: number | null = null;
-
-    // for (let i = 0; i < size; i++) {
-    //   const { fieldKey, arguments: args } = fieldInfos[i];
-    //   if (args === null || !compareArgs(fieldArgs, args)) {
-    //     continue;
-    //   }
-
-    //   const links = cache.resolveFieldByKey(entityKey, fieldKey) as string[];
-    //   const currentOffset = args[cursorArgument];
-
-    //   if (
-    //     links === null ||
-    //     links.length === 0 ||
-    //     typeof currentOffset !== 'number'
-    //   ) {
-    //     continue;
-    //   }
-
-    //   if (!prevOffset || currentOffset > prevOffset) {
-    //     for (let j = 0; j < links.length; j++) {
-    //       const link = links[j];
-    //       if (visited.has(link)) continue;
-    //       result.push(link);
-    //       visited.add(link);
-    //     }
-    //   } else {
-    //     const tempResult: NullArray<string> = [];
-    //     for (let j = 0; j < links.length; j++) {
-    //       const link = links[j];
-    //       if (visited.has(link)) continue;
-    //       tempResult.push(link);
-    //       visited.add(link);
-    //     }
-    //     result = [...tempResult, ...result];
-    //   }
-
-    //   prevOffset = currentOffset;
-    // }
-
-    // const hasCurrentPage = cache.resolve(entityKey, fieldName, fieldArgs);
-    // if (hasCurrentPage) {
-    //   return result;
-    // } else if (!(info as any).store.schema) {
-    //   return undefined;
-    // } else {
-    //   info.partial = true;
-    //   return result;
-    // }
   };
 };
 
@@ -136,6 +82,15 @@ export const createUrqlClient = (ssrExchange: any) => ({
       },
       updates: {
         Mutation: {
+          createPost: (_result, args, cache, info) => {
+            const allFields = cache.inspectFields('Query');
+            const fieldInfos = allFields.filter(
+              info => info.fieldName === 'page'
+            );
+            fieldInfos.forEach(fi => {
+              cache.invalidate('Query', 'page', fi.arguments || {});
+            });
+          },
           logout: (_result, args, cache, info) => {
             betterUpdateQuery<LogoutMutation, MeQuery>(
               cache,
