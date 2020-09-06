@@ -7,10 +7,12 @@ interface VotingProps {
 }
 
 export default function Voting({ post }: VotingProps) {
+  const [points, setPoints] = useState(post.points);
   const [loadingState, setLoadingState] = useState<
     'upvote-loading' | 'downvote-loading' | 'not-loading'
   >('not-loading');
   const [, vote] = useVoteMutation();
+
   return (
     <Flex direction="column" alignItems="center" justifyContent="center" mr={6}>
       <IconButton
@@ -19,25 +21,35 @@ export default function Voting({ post }: VotingProps) {
         aria-label="Upvote post"
         onClick={async () => {
           setLoadingState('upvote-loading');
-          await vote({
+          const result = await vote({
             postId: post.id,
             value: 1,
           });
+          if (result.data?.vote) {
+            setPoints(result.data.vote.points);
+          }
+
           setLoadingState('not-loading');
+          // if (data?.vote.points) {
+          //   setPoints(data?.vote.points);
+          // }
         }}
         isLoading={loadingState === 'upvote-loading'}
       />
-      {post.points}
+      {points}
       <IconButton
         icon="chevron-down"
         size="sm"
         aria-label="Downvote post"
         onClick={async () => {
           setLoadingState('downvote-loading');
-          await vote({
+          const result = await vote({
             postId: post.id,
             value: -1,
           });
+          if (result.data?.vote) {
+            setPoints(result.data.vote.points);
+          }
           setLoadingState('not-loading');
         }}
         isLoading={loadingState === 'downvote-loading'}

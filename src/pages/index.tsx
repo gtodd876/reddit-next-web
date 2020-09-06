@@ -30,7 +30,6 @@ function Index() {
   if (!fetching && !data?.posts) {
     return <div>no posts are available</div>;
   }
-  console.log({ data });
   return (
     <Layout>
       <Flex justifyContent="space-between" align="center">
