@@ -8,6 +8,8 @@ interface VotingProps {
 
 export default function Voting({ post }: VotingProps) {
   const [points, setPoints] = useState(post.points);
+  const [hasUpVoted, setHasUpVoted] = useState(false);
+  const [hasDownVoted, setHasDownVoted] = useState(false);
   const [loadingState, setLoadingState] = useState<
     'upvote-loading' | 'downvote-loading' | 'not-loading'
   >('not-loading');
@@ -21,18 +23,19 @@ export default function Voting({ post }: VotingProps) {
         aria-label="Upvote post"
         onClick={async () => {
           setLoadingState('upvote-loading');
-          const result = await vote({
-            postId: post.id,
-            value: 1,
-          });
-          if (result.data?.vote) {
-            setPoints(result.data.vote.points);
+          if (!hasUpVoted) {
+            const result = await vote({
+              postId: post.id,
+              value: 1,
+            });
+            if (result.data?.vote) {
+              setPoints(result.data.vote.points);
+            }
           }
 
           setLoadingState('not-loading');
-          // if (data?.vote.points) {
-          //   setPoints(data?.vote.points);
-          // }
+          setHasUpVoted(true);
+          setHasDownVoted(false);
         }}
         isLoading={loadingState === 'upvote-loading'}
       />
@@ -43,14 +46,18 @@ export default function Voting({ post }: VotingProps) {
         aria-label="Downvote post"
         onClick={async () => {
           setLoadingState('downvote-loading');
-          const result = await vote({
-            postId: post.id,
-            value: -1,
-          });
-          if (result.data?.vote) {
-            setPoints(result.data.vote.points);
+          if (!hasDownVoted) {
+            const result = await vote({
+              postId: post.id,
+              value: -1,
+            });
+            if (result.data?.vote) {
+              setPoints(result.data.vote.points);
+            }
           }
           setLoadingState('not-loading');
+          setHasDownVoted(true);
+          setHasUpVoted(false);
         }}
         isLoading={loadingState === 'downvote-loading'}
       />

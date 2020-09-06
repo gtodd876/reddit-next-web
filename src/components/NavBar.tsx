@@ -7,9 +7,7 @@ interface NavBarProps {}
 
 export default function NavBar({}: NavBarProps) {
   const [{ fetching: logoutFetching }, logout] = useLogoutMutation();
-  const [{ data, fetching }] = useMeQuery({
-    pause: isServer(),
-  });
+  const [{ data, fetching }] = useMeQuery();
   let body = null;
   // data is loading
   if (fetching) {
