@@ -32,12 +32,15 @@ function Index() {
   }
   return (
     <Layout>
-      <Flex justifyContent="space-between" align="center">
-        <Heading>Reddit Next</Heading>
-        <NextLink href="/create-post">
-          <Link>create post</Link>
-        </NextLink>
-      </Flex>
+      {/* <Flex justifyContent="space-between" align="center"> */}
+      {/* <Heading>Reddit Next</Heading> */}
+
+      <NextLink href="/create-post">
+        <Button as={Link} marginBottom={8}>
+          create post
+        </Button>
+      </NextLink>
+      {/* </Flex> */}
       <br />
       {fetching && !data?.posts ? (
         <div>loading...</div>
@@ -47,7 +50,11 @@ function Index() {
             <Flex key={p.id} p={5} shadow="md" borderWidth="1px">
               <Voting post={p} />
               <Box>
-                <Heading fontSize="xl">{p.title}</Heading>
+                <NextLink href="/post/[id]" as={`/post/${p.id}`}>
+                  <Link>
+                    <Heading fontSize="xl">{p.title}</Heading>
+                  </Link>
+                </NextLink>
                 <Text>by {p.creator.username}</Text>
                 <Text mt={4}>{p.textSnippet}</Text>
               </Box>

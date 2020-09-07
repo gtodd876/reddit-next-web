@@ -1,4 +1,4 @@
-import { Box, Link, Flex, Button } from '@chakra-ui/core';
+import { Box, Link, Flex, Button, Heading } from '@chakra-ui/core';
 import NextLink from 'next/link';
 import { useMeQuery, useLogoutMutation } from '../generated/graphql';
 import { isServer } from '../utils/isServer';
@@ -39,9 +39,17 @@ export default function NavBar({}: NavBarProps) {
       </Flex>
     );
   }
+
   return (
     <Flex position="sticky" top={0} bg="#333" p={4} zIndex={1}>
-      <Box ml={'auto'}>{body}</Box>
+      <Flex flex={1} maxWidth={800} alignItems="center" margin="auto">
+        <NextLink href="/">
+          <Link>
+            <Heading color="white">Reddit Next</Heading>
+          </Link>
+        </NextLink>
+        <Box ml={'auto'}>{body}</Box>
+      </Flex>
     </Flex>
   );
 }
