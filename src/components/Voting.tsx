@@ -7,9 +7,6 @@ interface VotingProps {
 }
 
 export default function Voting({ post }: VotingProps) {
-  const [points, setPoints] = useState(post.points);
-  const [hasUpVoted, setHasUpVoted] = useState(false);
-  const [hasDownVoted, setHasDownVoted] = useState(false);
   const [loadingState, setLoadingState] = useState<
     'upvote-loading' | 'downvote-loading' | 'not-loading'
   >('not-loading');
@@ -22,44 +19,33 @@ export default function Voting({ post }: VotingProps) {
         size="sm"
         aria-label="Upvote post"
         onClick={async () => {
+          if (post.voteStatus === 1) return;
           setLoadingState('upvote-loading');
-          if (!hasUpVoted) {
-            const result = await vote({
-              postId: post.id,
-              value: 1,
-            });
-            if (result.data?.vote) {
-              setPoints(result.data.vote.points);
-            }
-          }
-
+          await vote({
+            postId: post.id,
+            value: 1,
+          });
           setLoadingState('not-loading');
-          setHasUpVoted(true);
-          setHasDownVoted(false);
         }}
         isLoading={loadingState === 'upvote-loading'}
+        variantColor={post.voteStatus === 1 ? 'green' : undefined}
       />
-      {points}
+      {post.points}
       <IconButton
         icon="chevron-down"
         size="sm"
-        aria-label="Downvote post"
+        aria-label="downvote post"
         onClick={async () => {
+          if (post.voteStatus === -1) return;
           setLoadingState('downvote-loading');
-          if (!hasDownVoted) {
-            const result = await vote({
-              postId: post.id,
-              value: -1,
-            });
-            if (result.data?.vote) {
-              setPoints(result.data.vote.points);
-            }
-          }
+          await vote({
+            postId: post.id,
+            value: -1,
+          });
           setLoadingState('not-loading');
-          setHasDownVoted(true);
-          setHasUpVoted(false);
         }}
         isLoading={loadingState === 'downvote-loading'}
+        variantColor={post.voteStatus === -1 ? 'red' : undefined}
       />
     </Flex>
   );
