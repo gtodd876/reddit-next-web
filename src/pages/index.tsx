@@ -1,4 +1,12 @@
-import { Button, Flex, Heading, Link, Stack, Text } from '@chakra-ui/core';
+import {
+  Button,
+  Flex,
+  Heading,
+  Link,
+  Stack,
+  Text,
+  Code,
+} from '@chakra-ui/core';
 import { withUrqlClient } from 'next-urql';
 import NextLink from 'next/link';
 import { useState } from 'react';
@@ -15,12 +23,16 @@ function Index() {
     cursor: null as null | string,
   });
 
-  const [{ data, fetching }] = usePostsQuery({
+  const [{ data, error, fetching }] = usePostsQuery({
     variables,
   });
 
   if (!fetching && !data?.posts) {
-    return <div>no posts are available</div>;
+    return (
+      <div>
+        no posts are available <Code>{error?.message}</Code>
+      </div>
+    );
   }
   return (
     <Layout>
